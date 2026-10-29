@@ -1,9 +1,12 @@
 ---
 import Base from '../layouts/Base.astro';
-import { ruta } from '../lib/assets';
 ---
 
 <Base titulo="Jugar">
-  <h2>Próximamente: mapa de escenarios</h2>
-  <a class="ghost" href={ruta('/')}>Inicio</a>
+  <noscript><p>El juego necesita JavaScript.</p></noscript>
 </Base>
+
+<script>
+  import { iniciar } from '../game/flujo';
+  iniciar();
+</script>
