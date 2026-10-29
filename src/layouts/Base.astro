@@ -1,0 +1,37 @@
+---
+import '../styles/global.css';
+import type { ClaveFondo } from '../data/tipos';
+import { img, ruta } from '../lib/assets';
+
+interface Props {
+  titulo?: string;
+  fondo?: ClaveFondo;
+}
+const { titulo, fondo = 'b0' } = Astro.props;
+const JUEGO = 'Sprint en la escuela';
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="description" content="Juego web para aprender SCRUM resolviendo retos por la escuela." />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="icon" type="image/svg+xml" href={ruta('/favicon.svg')} />
+    <link rel="icon" href={ruta('/favicon.ico')} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@600;800&display=swap"
+      rel="stylesheet"
+    />
+    <title>{titulo ? `${titulo} - ${JUEGO}` : JUEGO}</title>
+  </head>
+  <body>
+    <div id="bg" style={`background-image:url(${img(fondo)})`}></div>
+    <main id="app">
+      <slot />
+    </main>
+  </body>
+</html>
