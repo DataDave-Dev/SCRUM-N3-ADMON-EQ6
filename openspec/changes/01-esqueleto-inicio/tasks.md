@@ -24,7 +24,7 @@
 ## 4. Despliegue
 
 - [x] 4.1 Habilitar GitHub Pages con origen "GitHub Actions" en el repo y verificar con `gh api repos/DataDave-Dev/SCRUM-N3-ADMON-EQ6/pages` que `build_type` es `workflow`
-- [ ] 4.2 Crear `.github/workflows/deploy.yml` con `withastro/action` y `actions/deploy-pages` en push a `main` y verificar que el workflow queda verde y el sitio responde en `https://datadave-dev.github.io/SCRUM-N3-ADMON-EQ6/`
+- [x] 4.2 Crear `.github/workflows/deploy.yml` con `withastro/action` y `actions/deploy-pages` en push a `main` y verificar que el workflow queda verde y el sitio responde en `https://datadave-dev.github.io/SCRUM-N3-ADMON-EQ6/`
 - [x] 4.3 Actualizar `README.md` con comandos, estructura y URL pública y verificar que los comandos documentados corren tal cual
 
 ## Workflow follow-up
