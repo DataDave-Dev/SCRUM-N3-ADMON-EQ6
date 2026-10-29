@@ -5,10 +5,13 @@ import {
   completarEscenario,
   elegirPaso,
   escenarioHabilitado,
+  estrellas,
   guiaDelReto,
+  insignias,
   nuevaPartida,
   ordenCorrecto,
   paresCorrectos,
+  rango,
   resolverReto,
   type Partida,
 } from './estado';
@@ -101,4 +104,41 @@ test('una definición sin concepto activo no cambia nada', () => {
 test('paresCorrectos exige que cada concepto tenga su definición', () => {
   expect(paresCorrectos([0, 1, 2])).toBe(true);
   expect(paresCorrectos([0, 2, 1])).toBe(false);
+});
+
+test('estrellas: 3 desde 90, 2 de 60 a 89, 1 por debajo', () => {
+  expect([120, 90, 89, 60, 59, 50].map(estrellas)).toEqual([3, 3, 2, 2, 1, 1]);
+});
+
+test('rango cambia en 100, 80 y 60', () => {
+  expect([120, 100, 99, 80, 79, 60, 59, 40].map(rango)).toEqual([
+    'Maestro Scrum',
+    'Maestro Scrum',
+    'Desarrollador pro',
+    'Desarrollador pro',
+    'Desarrollador en práctica',
+    'Desarrollador en práctica',
+    'Aprendiz como Beto',
+    'Aprendiz como Beto',
+  ]);
+});
+
+/** Juega `resultados` en orden: 'r' acierto rápido, 'a' acierto lento, 'e' error. */
+const jugar = (resultados: string) =>
+  [...resultados].reduce((p, r) => resolverReto(p, r !== 'e', 'x', r === 'r'), nuevaPartida());
+
+test('partida perfecta y rápida gana las tres insignias', () => {
+  expect(insignias(jugar('r'.repeat(12)))).toEqual(['Sin errores', 'Racha de 12', 'Velocista']);
+});
+
+test('una racha máxima de 5 no da insignia de racha', () => {
+  expect(insignias(jugar('aaaaaeaaaaea'))).toEqual([]);
+});
+
+test('dos fallos, racha 4 y lentitud: ninguna insignia', () => {
+  expect(insignias(jugar('aaaaearrreaa'))).toEqual([]);
+});
+
+test('un error no cuenta como rápido aunque se marque así', () => {
+  expect(resolverReto(nuevaPartida(), false, 'x', true).rapidos).toBe(0);
 });

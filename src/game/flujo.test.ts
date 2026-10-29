@@ -117,3 +117,21 @@ test('con tres fallos "continuar" lleva a la derrota con tres explicaciones; "re
   expect(p.fallos).toHaveLength(3);
   expect(transicion(p, 'reintentar')).toEqual(nuevaPartida());
 });
+
+test('"reiniciar" desde la final vuelve al mapa con una partida nueva', () => {
+  const fin = { ...nuevaPartida(), pantalla: 'fin' as const, puntos: 120 };
+  expect(transicion(fin, 'reiniciar')).toEqual(nuevaPartida());
+});
+
+test('un acierto en menos de 10 s cuenta como rápido; a los 10 s ya no', () => {
+  let t = 0;
+  const reloj = () => t;
+  const enReto = ['escenario', 'siguiente', 'siguiente', 'siguiente'].reduce(
+    (p, a) => transicion(p, a, '0', Math.random, reloj),
+    nuevaPartida(),
+  );
+  t = 9_999;
+  expect(transicion(enReto, 'opcion', '0', Math.random, reloj).rapidos).toBe(1);
+  t = 10_000;
+  expect(transicion(enReto, 'opcion', '0', Math.random, reloj).rapidos).toBe(0);
+});

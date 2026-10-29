@@ -158,19 +158,18 @@ const ancho: Record<ClavePersonaje, number> = { beto: 25, riqui: 34, lili: 38, i
 
     <footer class="pie pixel gris">
       <span>PROTOTIPO · SPRINT 1 · EQUIPO 6 SCRUM</span>
-      <span>MEJOR PUNTAJE <span id="mejor-pie" class="yel">0</span> / {retos * 10}</span>
+      <span>MEJOR PUNTAJE: <span id="mejor-pie" class="yel">0</span> DE {retos * 10}</span>
       <span class="blink claro">© 2026 · INSERT COIN</span>
     </footer>
 
     <div class="scan" aria-hidden="true"></div>
   </div>
 
-  <script is:inline>
-    try {
-      var mejor = +localStorage.getItem('sprint-best') || 0;
-      document.getElementById('mejor').textContent = String(mejor).padStart(6, '0');
-      document.getElementById('mejor-pie').textContent = mejor;
-    } catch (e) {}
+  <script>
+    import { leerRecord } from '../lib/record';
+    const mejor = leerRecord();
+    document.getElementById('mejor')!.textContent = String(mejor).padStart(6, '0');
+    document.getElementById('mejor-pie')!.textContent = String(mejor);
   </script>
 </Base>
 
