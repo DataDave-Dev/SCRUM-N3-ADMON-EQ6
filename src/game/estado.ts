@@ -3,8 +3,9 @@ import type { ClavePersonaje } from '../data/tipos';
 
 export const PUNTOS_POR_ACIERTO = 10;
 export const RETOS_POR_PARTIDA = 12;
+export const VIDAS_INICIALES = 3;
 
-export type Pantalla = 'mapa' | 'intro' | 'reto' | 'retro' | 'resultado' | 'fin';
+export type Pantalla = 'mapa' | 'intro' | 'reto' | 'retro' | 'resultado' | 'derrota' | 'fin';
 
 /** Estado completo de una partida. Inmutable: cada función devuelve una copia. */
 export interface Partida {
@@ -20,6 +21,14 @@ export interface Partida {
   progreso: (1 | 2)[];
   puntosEscenario: number[];
   completados: boolean[];
+  vidas: number;
+  /** Aciertos consecutivos. */
+  racha: number;
+  rachaMax: number;
+  /** Explicaciones de los retos fallados, en orden. */
+  fallos: string[];
+  /** El último reto se resolvió por tiempo agotado. */
+  tiempoAgotado: boolean;
 }
 
 export const nuevaPartida = (): Partida => ({
@@ -31,12 +40,23 @@ export const nuevaPartida = (): Partida => ({
   progreso: [],
   puntosEscenario: escenarios.map(() => 0),
   completados: escenarios.map(() => false),
+  vidas: VIDAS_INICIALES,
+  racha: 0,
+  rachaMax: 0,
+  fallos: [],
+  tiempoAgotado: false,
 });
 
-export const resolverReto = (p: Partida, acierto: boolean): Partida => {
+/** Un error resta vida, reinicia la racha y guarda `explicacion` para el repaso de la derrota. */
+export const resolverReto = (p: Partida, acierto: boolean, explicacion = ''): Partida => {
   const pts = acierto ? PUNTOS_POR_ACIERTO : 0;
+  const racha = acierto ? p.racha + 1 : 0;
   return {
     ...p,
+    vidas: acierto ? p.vidas : p.vidas - 1,
+    racha,
+    rachaMax: Math.max(p.rachaMax, racha),
+    fallos: acierto ? p.fallos : [...p.fallos, explicacion],
     puntos: p.puntos + pts,
     puntosEscenario: p.puntosEscenario.map((v, i) => (i === p.escenario ? v + pts : v)),
     progreso: [...p.progreso, acierto ? 1 : 2],

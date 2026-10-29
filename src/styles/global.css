@@ -106,10 +106,16 @@ button { font: inherit; color: inherit; border: 0; cursor: pointer; }
   padding: 6px 14px;
   font: 800 22px "Baloo 2", sans-serif;
 }
+.hd { color: var(--red); letter-spacing: 2px; }
+.hd i { font-style: normal; opacity: .25; }
 .seg { display: flex; gap: 4px; }
 .seg i { flex: 1; height: 8px; border-radius: 4px; background: rgba(255, 255, 255, .25); }
 .seg i.on { background: var(--grn); }
 .seg i.bad { background: var(--red); }
+
+/* Barra de tiempo del reto */
+.tm { height: 10px; border-radius: 6px; background: rgba(255, 255, 255, .2); overflow: hidden; }
+.tm b { display: block; height: 100%; width: 100%; background: var(--yel); }
 
 /* Escena: fondo del escenario con hasta dos personajes */
 .scn {

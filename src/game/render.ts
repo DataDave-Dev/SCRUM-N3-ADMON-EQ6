@@ -1,5 +1,6 @@
 import type { ClaveFondo } from '../data/tipos';
 import { img } from '../lib/assets';
+import { detener } from './temporizador';
 
 export type Despachar = (accion: string, arg?: string) => void;
 
@@ -10,9 +11,10 @@ let cancelar: (() => void) | undefined;
 
 const app = () => document.getElementById('app')!;
 
-/** Reemplaza la pantalla, cambia el fondo, sube al inicio y arranca el efecto de escritura de `[data-escribir]`. */
+/** Detiene el temporizador del reto, reemplaza la pantalla, cambia el fondo, sube al inicio y arranca el efecto de escritura de `[data-escribir]`. */
 export function montar(html: string, fondo?: ClaveFondo): void {
   cancelar?.();
+  detener();
   if (fondo) document.getElementById('bg')!.style.backgroundImage = `url(${img(fondo)})`;
   app().innerHTML = html;
   window.scrollTo(0, 0);

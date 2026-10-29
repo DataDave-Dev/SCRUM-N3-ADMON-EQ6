@@ -43,3 +43,30 @@ test('con todos los aciertos la partida llega a 90 pts y "fin"', () => {
   expect(p.completados).toEqual([true, true, true]);
   expect(p.pantalla).toBe('fin');
 });
+
+const alPrimerReto = (p: Partida) => avanzar(p, [['escenario', '0'], ['siguiente'], ['siguiente'], ['siguiente']]);
+
+test('el tiempo agotado cuenta como error y una opción posterior no lo resuelve otra vez', () => {
+  const retro = transicion(alPrimerReto(nuevaPartida()), 'tiempo');
+  expect(retro.pantalla).toBe('retro');
+  expect(retro.tiempoAgotado).toBe(true);
+  expect(retro.vidas).toBe(2);
+  expect(transicion(retro, 'tiempo')).toBe(retro);
+  expect(transicion(retro, 'opcion', '0')).toBe(retro);
+});
+
+test('responder antes del límite no marca tiempo agotado y el tiempo ya no cuenta', () => {
+  const retro = transicion(alPrimerReto(nuevaPartida()), 'opcion', '1');
+  expect(retro.tiempoAgotado).toBe(false);
+  expect(transicion(retro, 'tiempo')).toBe(retro);
+});
+
+test('con tres fallos "continuar" lleva a la derrota con tres explicaciones; "reintentar" vuelve al mapa', () => {
+  let p = alPrimerReto(nuevaPartida());
+  p = avanzar(p, [['opcion', '1'], ['continuar'], ['opcion', '1'], ['continuar'], ['opcion', '1']]);
+  expect(p.vidas).toBe(0);
+  p = transicion(p, 'continuar');
+  expect(p.pantalla).toBe('derrota');
+  expect(p.fallos).toHaveLength(3);
+  expect(transicion(p, 'reintentar')).toEqual(nuevaPartida());
+});
