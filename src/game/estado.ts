@@ -29,6 +29,14 @@ export interface Partida {
   fallos: string[];
   /** El último reto se resolvió por tiempo agotado. */
   tiempoAgotado: boolean;
+  /** Orden barajado de las opciones, pasos o definiciones del reto en curso (índices originales). */
+  orden: number[];
+  /** Ordenar: índices de los pasos en el orden pulsado. */
+  seleccion: number[];
+  /** Relacionar: `pares[concepto]` es la definición asignada. */
+  pares: (number | undefined)[];
+  /** Relacionar: concepto marcado esperando definición. */
+  activo: number | null;
 }
 
 export const nuevaPartida = (): Partida => ({
@@ -45,6 +53,10 @@ export const nuevaPartida = (): Partida => ({
   rachaMax: 0,
   fallos: [],
   tiempoAgotado: false,
+  orden: [],
+  seleccion: [],
+  pares: [],
+  activo: null,
 });
 
 /** Un error resta vida, reinicia la racha y guarda `explicacion` para el repaso de la derrota. */
@@ -75,3 +87,27 @@ export const escenarioHabilitado = (p: Partida, i: number): boolean =>
 /** En la cancha, Pau guía los retos pares (2 y 4); el resto lo guía el personaje del escenario. */
 export const guiaDelReto = (escenario: number, reto: number): ClavePersonaje =>
   escenario === 2 && reto % 2 === 1 ? 'pau' : escenarios[escenario]!.guia;
+
+/** Numera el paso `i`; si ya tenía número, lo quita junto con los posteriores. */
+export const elegirPaso = (p: Partida, i: number): Partida => {
+  const k = p.seleccion.indexOf(i);
+  return { ...p, seleccion: k < 0 ? [...p.seleccion, i] : p.seleccion.slice(0, k) };
+};
+
+export const activarConcepto = (p: Partida, c: number): Partida => ({ ...p, activo: c });
+
+/** Empareja la definición `d` con el concepto activo, liberándola de su par anterior. Sin activo no cambia nada. */
+export const asignarDefinicion = (p: Partida, d: number): Partida => {
+  const c = p.activo;
+  if (c === null) return p;
+  const pares = Array.from({ length: Math.max(p.pares.length, c + 1) }, (_, i) =>
+    i === c ? d : p.pares[i] === d ? undefined : p.pares[i],
+  );
+  return { ...p, pares, activo: null };
+};
+
+/** El paso correcto en la posición k es el índice k. Se asume la selección completa. */
+export const ordenCorrecto = (seleccion: number[]): boolean => seleccion.every((x, k) => x === k);
+
+/** El par correcto del concepto c es la definición c. Se asumen todos emparejados. */
+export const paresCorrectos = (pares: (number | undefined)[]): boolean => pares.every((d, c) => d === c);

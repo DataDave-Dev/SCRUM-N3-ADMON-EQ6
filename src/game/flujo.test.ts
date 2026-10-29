@@ -1,6 +1,8 @@
 import { expect, test } from 'vitest';
 import { nuevaPartida, type Partida } from './estado';
+import { escenarios } from '../data/escenarios';
 import { transicion } from './flujo';
+import { retosJugables } from './util';
 
 const avanzar = (p: Partida, pasos: [string, string?][]) =>
   pasos.reduce((q, [accion, arg]) => transicion(q, accion, arg), p);
@@ -29,19 +31,64 @@ test('tras la primera respuesta la pantalla cambia y una segunda opción no cuen
   expect(transicion(retro, 'opcion', '1')).toBe(retro);
 });
 
-test('con todos los aciertos la partida llega a 90 pts y "fin"', () => {
+/** Pulsaciones que resuelven bien el reto actual, sea del tipo que sea. */
+const resolverBien = (p: Partida): [string, string?][] => {
+  const r = retosJugables(escenarios[p.escenario]!)[p.reto]!;
+  if (r.tipo === 'mc') return [['opcion', '0']];
+  if (r.tipo === 'ord') return [...r.pasos.map((_, i): [string, string] => ['elegir', String(i)]), ['comprobar']];
+  return [...r.pares.flatMap((_, i): [string, string][] => [['izq', String(i)], ['der', String(i)]]), ['comprobar']];
+};
+
+test('con todos los aciertos la partida llega a 120 pts y "fin"', () => {
   let p = nuevaPartida();
   for (let i = 0; i < 3; i++) {
     p = avanzar(p, [['escenario', String(i)], ['siguiente'], ['siguiente'], ['siguiente']]);
-    for (let r = 0; r < 3; r++) p = avanzar(p, [['opcion', '0'], ['continuar']]);
+    for (let r = 0; r < 4; r++) p = avanzar(p, [...resolverBien(p), ['continuar']]);
     expect(p.pantalla).toBe('resultado');
-    expect(p.puntosEscenario[i]).toBe(30);
+    expect(p.puntosEscenario[i]).toBe(40);
     p = transicion(p, i < 2 ? 'mapa' : 'fin');
   }
-  expect(p.puntos).toBe(90);
-  expect(p.progreso).toHaveLength(9);
+  expect(p.puntos).toBe(120);
+  expect(p.progreso).toHaveLength(12);
   expect(p.completados).toEqual([true, true, true]);
   expect(p.pantalla).toBe('fin');
+});
+
+/** Escenario 1 hasta su reto 4 (ordenar), acertando los tres primeros. */
+const alRetoOrdenar = () => {
+  let p = avanzar(nuevaPartida(), [['escenario', '0'], ['siguiente'], ['siguiente'], ['siguiente']]);
+  for (let r = 0; r < 3; r++) p = avanzar(p, [['opcion', '0'], ['continuar']]);
+  return p;
+};
+
+test('al entrar a un reto los elementos se barajan y la selección empieza vacía', () => {
+  const p = alRetoOrdenar();
+  expect([...p.orden].sort()).toEqual([0, 1, 2, 3]);
+  expect(p.seleccion).toEqual([]);
+});
+
+test('"Comprobar" con el orden incompleto devuelve la misma partida; "opcion" no aplica a ordenar', () => {
+  const p = avanzar(alRetoOrdenar(), [['elegir', '0'], ['elegir', '1']]);
+  expect(transicion(p, 'comprobar')).toBe(p);
+  expect(transicion(p, 'opcion', '0')).toBe(p);
+});
+
+test('un orden incorrecto se resuelve como error', () => {
+  const p = avanzar(alRetoOrdenar(), [['elegir', '3'], ['elegir', '1'], ['elegir', '2'], ['elegir', '0'], ['comprobar']]);
+  expect(p.pantalla).toBe('retro');
+  expect(p.progreso.at(-1)).toBe(2);
+});
+
+test('relacionar: dos pares no comprueban y un par cruzado es error', () => {
+  let p = transicion(transicion(alRetoOrdenar(), 'tiempo'), 'continuar');
+  p = transicion(p, 'mapa');
+  p = avanzar(p, [['escenario', '1'], ['siguiente'], ['siguiente'], ['siguiente']]);
+  for (let r = 0; r < 3; r++) p = avanzar(p, [['opcion', '0'], ['continuar']]);
+  const dos = avanzar(p, [['izq', '0'], ['der', '0'], ['izq', '1'], ['der', '2']]);
+  expect(transicion(dos, 'comprobar')).toBe(dos);
+  const fin = avanzar(dos, [['izq', '2'], ['der', '1'], ['comprobar']]);
+  expect(fin.pantalla).toBe('retro');
+  expect(fin.progreso.at(-1)).toBe(2);
 });
 
 const alPrimerReto = (p: Partida) => avanzar(p, [['escenario', '0'], ['siguiente'], ['siguiente'], ['siguiente']]);

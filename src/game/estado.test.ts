@@ -1,5 +1,17 @@
 import { expect, test } from 'vitest';
-import { completarEscenario, escenarioHabilitado, guiaDelReto, nuevaPartida, resolverReto } from './estado';
+import {
+  activarConcepto,
+  asignarDefinicion,
+  completarEscenario,
+  elegirPaso,
+  escenarioHabilitado,
+  guiaDelReto,
+  nuevaPartida,
+  ordenCorrecto,
+  paresCorrectos,
+  resolverReto,
+  type Partida,
+} from './estado';
 
 test('un acierto suma 10 puntos a la partida y al escenario; un error no suma', () => {
   const p = resolverReto(nuevaPartida(), true);
@@ -51,4 +63,42 @@ test('la racha cuenta aciertos seguidos, un error la reinicia y rachaMax la recu
 test('los fallos guardan la explicación en orden', () => {
   const p = resolverReto(resolverReto(resolverReto(nuevaPartida(), false, 'a'), true), false, 'b');
   expect(p.fallos).toEqual(['a', 'b']);
+});
+
+const pulsar = (pasos: number[]) => pasos.reduce(elegirPaso, nuevaPartida()).seleccion;
+
+test('elegirPaso numera en el orden pulsado', () => {
+  expect(pulsar([2, 0, 3])).toEqual([2, 0, 3]);
+});
+
+test('pulsar un paso numerado lo quita junto con los posteriores', () => {
+  expect(pulsar([2, 0, 3, 0])).toEqual([2]);
+});
+
+test('ordenCorrecto acepta solo 0, 1, 2, 3', () => {
+  expect(ordenCorrecto([0, 1, 2, 3])).toBe(true);
+  expect(ordenCorrecto([3, 1, 2, 0])).toBe(false);
+});
+
+const emparejar = (p: Partida, c: number, d: number) => asignarDefinicion(activarConcepto(p, c), d);
+
+test('activar un concepto y pulsar una definición forma el par y desactiva el concepto', () => {
+  const p = emparejar(nuevaPartida(), 0, 0);
+  expect(p.pares).toEqual([0]);
+  expect(p.activo).toBeNull();
+});
+
+test('reasignar una definición la libera de su par anterior', () => {
+  const p = emparejar(emparejar(nuevaPartida(), 0, 0), 1, 0);
+  expect(p.pares).toEqual([undefined, 0]);
+});
+
+test('una definición sin concepto activo no cambia nada', () => {
+  const p = nuevaPartida();
+  expect(asignarDefinicion(p, 1)).toBe(p);
+});
+
+test('paresCorrectos exige que cada concepto tenga su definición', () => {
+  expect(paresCorrectos([0, 1, 2])).toBe(true);
+  expect(paresCorrectos([0, 2, 1])).toBe(false);
 });

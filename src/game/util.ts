@@ -1,5 +1,5 @@
 import { personajes } from '../data/personajes';
-import type { ClavePersonaje, Escenario, RetoOpcionMultiple } from '../data/tipos';
+import type { ClavePersonaje, Escenario, Reto } from '../data/tipos';
 
 /** Copia barajada (Fisher-Yates). `rnd` se inyecta para pruebas deterministas. */
 export const barajar = <T>(arr: readonly T[], rnd: () => number = Math.random): T[] => {
@@ -21,6 +21,9 @@ export const globo = (clave: ClavePersonaje, html: string): string => {
   return `<div class="cl" style="--c:${color}"><b>${nombre}</b>${html}</div>`;
 };
 
-/** Único punto que decide qué retos se juegan. r04 amplía a ordenar y relacionar. */
-export const retosJugables = (e: Escenario): RetoOpcionMultiple[] =>
-  e.retos.filter((r): r is RetoOpcionMultiple => r.tipo === 'mc');
+/** Único punto que decide qué retos se juegan. */
+export const retosJugables = (e: Escenario): Reto[] => e.retos;
+
+/** Textos que el reto baraja: opciones, pasos o definiciones, en su orden original. */
+export const elementos = (r: Reto): string[] =>
+  r.tipo === 'mc' ? [r.correcta, ...r.incorrectas] : r.tipo === 'ord' ? r.pasos : r.pares.map(([, d]) => d);

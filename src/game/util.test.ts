@@ -1,5 +1,6 @@
 import { expect, test } from 'vitest';
 import { escenarios } from '../data/escenarios';
+import { RETOS_POR_PARTIDA } from './estado';
 import { barajar, esc, retosJugables } from './util';
 
 test('barajar conserva los elementos y no muta el original', () => {
@@ -17,10 +18,7 @@ test('esc escapa HTML', () => {
   expect(esc(`<b a="1">&'`)).toBe('&lt;b a=&quot;1&quot;&gt;&amp;&#39;');
 });
 
-test('retosJugables devuelve 3 retos de opción múltiple por escenario', () => {
-  for (const e of escenarios) {
-    const r = retosJugables(e);
-    expect(r).toHaveLength(3);
-    expect(r.every((x) => x.tipo === 'mc')).toBe(true);
-  }
+test('retosJugables devuelve los 4 retos de cada escenario y 12 en la partida', () => {
+  for (const e of escenarios) expect(retosJugables(e)).toHaveLength(4);
+  expect(escenarios.flatMap(retosJugables)).toHaveLength(RETOS_POR_PARTIDA);
 });

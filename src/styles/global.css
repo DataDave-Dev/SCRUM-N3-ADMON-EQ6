@@ -176,5 +176,27 @@ button { font: inherit; color: inherit; border: 0; cursor: pointer; }
 .pi:nth-child(3n) { background: #8ec8ff; transform: rotate(-.8deg); }
 .pi:hover { transform: rotate(0) translateY(-3px); }
 
+/* Ordenar: el número aparece al pulsar */
+.pi .num { display: inline-block; min-width: 1.6em; margin-right: 8px; text-align: center; border-radius: 50%; background: var(--ink); color: var(--chalk); }
+.pi .num:empty { display: none; }
+.pi.sel { outline: 4px solid var(--chalk); }
+.go:disabled { opacity: .5; cursor: not-allowed; }
+.ops + .go { margin-top: 20px; }
+
+/* Relacionar: dos columnas; --par es el color del par */
+.cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+.cols > div { display: flex; flex-direction: column; gap: 12px; }
+.rl {
+  flex: 1;
+  padding: 12px;
+  border-radius: 12px;
+  border: 4px solid var(--chalk);
+  background: rgba(10, 24, 20, .75);
+  font-weight: 800;
+  text-align: left;
+}
+.rl.par { background: var(--par); border-color: var(--par); color: var(--ink); }
+.rl.act { border-style: dashed; border-color: var(--yel); }
+
 /* Puntaje del escenario */
 .puntaje { font-size: 72px; color: var(--yel); }
