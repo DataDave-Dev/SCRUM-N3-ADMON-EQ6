@@ -32,7 +32,7 @@
 ## 7. Integración
 
 - [x] 7.1 Jugar los tres escenarios completos en el navegador a 375 px y 1024 px y verificar que el marcador llega a 90 pts con todos los aciertos y que `pnpm test`, `pnpm astro check` y `pnpm build` pasan
-- [ ] 7.2 Publicar en GitHub Pages y verificar que el recorrido completo funciona en la URL pública
+- [x] 7.2 Publicar en GitHub Pages y verificar que el recorrido completo funciona en la URL pública
 
 ## Workflow follow-up
 
