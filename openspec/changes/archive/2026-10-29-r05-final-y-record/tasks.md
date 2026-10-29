@@ -12,4 +12,4 @@
 
 ## 3. Integración
 
-- [ ] 3.1 Completar una partida con 120 pts y otra con menos de 60 y verificar estrellas, rango, insignias y récord, además de que `pnpm test`, `pnpm astro check` y `pnpm build` pasan y el sitio publicado funciona
+- [x] 3.1 Completar una partida con 120 pts y otra con menos de 60 y verificar estrellas, rango, insignias y récord, además de que `pnpm test`, `pnpm astro check` y `pnpm build` pasan y el sitio publicado funciona
