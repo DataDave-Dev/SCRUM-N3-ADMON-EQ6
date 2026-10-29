@@ -4,9 +4,18 @@ import Base from '../layouts/Base.astro';
 
 <Base titulo="Jugar">
   <noscript><p>El juego necesita JavaScript.</p></noscript>
+  <canvas id="confeti" slot="fuera" aria-hidden="true"></canvas>
+  <button id="silencio" slot="fuera" type="button">Sonido: sí</button>
 </Base>
 
 <script>
   import { iniciar } from '../game/flujo';
+  import { estaSilenciado, silenciar } from '../game/sonido';
+
+  const boton = document.getElementById('silencio')!;
+  boton.addEventListener('click', () => {
+    silenciar(!estaSilenciado());
+    boton.textContent = estaSilenciado() ? 'Sonido: no' : 'Sonido: sí';
+  });
   iniciar();
 </script>

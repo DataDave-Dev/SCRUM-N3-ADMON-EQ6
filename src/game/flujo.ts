@@ -1,5 +1,6 @@
 import { escenarios } from '../data/escenarios';
 import { guardarRecord } from '../lib/record';
+import { lanzar } from './confeti';
 import {
   activarConcepto,
   asignarDefinicion,
@@ -11,6 +12,7 @@ import {
   paresCorrectos,
   resolverReto,
   MS_ACIERTO_RAPIDO,
+  type Pantalla,
   type Partida,
 } from './estado';
 import { derrota } from './pantallas/derrota';
@@ -21,6 +23,7 @@ import { resultado } from './pantallas/resultado';
 import { cuerpoReto, reto, SEGUNDOS_POR_TIPO } from './pantallas/reto';
 import { retro } from './pantallas/retro';
 import { escuchar, montar } from './render';
+import * as sonido from './sonido';
 import * as temporizador from './temporizador';
 import { barajar, elementos, retosJugables } from './util';
 
@@ -97,6 +100,12 @@ export function transicion(
   }
 }
 
+/** Puntos del escenario desde los que su resultado lanza confeti. */
+const PUNTOS_CONFETI_ESCENARIO = 30;
+const CONFETI_ESCENARIO = 90;
+const CONFETI_FINAL = 220;
+const MS_SACUDIDA = 450;
+
 const PANTALLAS = { mapa, intro, reto, retro, resultado, derrota, fin: final } as const;
 
 /** Único estado mutable del juego: la partida vigente. */
@@ -127,14 +136,40 @@ function actualizarReto(): void {
   if (foco?.accion && foco.arg) cuerpo.querySelector<HTMLElement>(`[data-accion="${foco.accion}"][data-arg="${foco.arg}"]`)?.focus();
 }
 
+/** Sacude #app una vez; la clase se retira tras la animación (0,4 s en CSS) para poder repetirla. */
+function sacudir(): void {
+  const app = document.getElementById('app')!;
+  app.classList.add('sacudir');
+  setTimeout(() => app.classList.remove('sacudir'), MS_SACUDIDA);
+}
+
+/** Sonidos y efectos al entrar en una pantalla nueva. */
+function efectos(antes: Pantalla): void {
+  if (partida.pantalla === antes) return;
+  if (partida.pantalla === 'retro') {
+    if (partida.progreso.at(-1) === 1) sonido.acierto();
+    else {
+      sonido.error();
+      sacudir();
+    }
+  } else if (partida.pantalla === 'resultado' && partida.puntosEscenario[partida.escenario]! >= PUNTOS_CONFETI_ESCENARIO) {
+    lanzar(CONFETI_ESCENARIO);
+  } else if (partida.pantalla === 'fin') {
+    sonido.victoria();
+    lanzar(CONFETI_FINAL);
+  }
+}
+
 function despachar(accion: string, arg?: string): void {
   const siguiente = transicion(partida, accion, arg);
   if (siguiente === partida) return;
-  const mismoReto = partida.pantalla === 'reto' && siguiente.pantalla === 'reto';
-  // Único efecto fuera de la tabla pura: al llegar a la final se guarda el récord.
+  const antes = partida.pantalla;
+  const mismoReto = antes === 'reto' && siguiente.pantalla === 'reto';
+  // Efectos fuera de la tabla pura: récord al llegar a la final, sonidos y animaciones.
   partida = siguiente.pantalla === 'fin' ? { ...siguiente, nuevoRecord: guardarRecord(siguiente.puntos) } : siguiente;
   if (mismoReto) actualizarReto();
   else pintar();
+  efectos(antes);
 }
 
 export function iniciar(): void {

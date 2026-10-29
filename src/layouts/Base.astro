@@ -32,6 +32,7 @@ const JUEGO = 'Sprint en la escuela';
   </head>
   <body>
     {fondo && <div id="bg" style={`background-image:url(${img(fondo)})`} />}
+    <slot name="fuera" />
     <main id="app">
       <slot />
     </main>
