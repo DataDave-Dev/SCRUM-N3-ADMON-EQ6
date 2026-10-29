@@ -1,0 +1,14 @@
+---
+import type { ClavePersonaje } from '../data/tipos';
+import { personajes } from '../data/personajes';
+
+interface Props {
+  personaje: ClavePersonaje;
+}
+const { nombre, color } = personajes[Astro.props.personaje];
+---
+
+<div class="cl" style={`--c:${color}`}>
+  <b>{nombre}</b>
+  <slot />
+</div>

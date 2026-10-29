@@ -1,16 +1,33 @@
 ---
+import Base from '../layouts/Base.astro';
+import { img, ruta } from '../lib/assets';
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Base>
+  <img
+    class="gp"
+    src={img('group')}
+    alt="Beto, Riqui, Lili, El Inge Morales, Toño y Pau"
+    width="693"
+    height="520"
+    fetchpriority="high"
+  />
+  <h1>Sprint en la escuela</h1>
+  <p>
+    Ayuda a Beto, Riqui, Lili, Pau y Toño a terminar su videojuego resolviendo 12 retos de SCRUM por
+    la escuela.
+  </p>
+  <div class="ctr">
+    <a class="go" href={ruta('/jugar/')}>Jugar</a>
+    <a class="ghost" href={ruta('/como-se-juega/')}>Cómo se juega</a>
+  </div>
+  <p class="ctr">
+    Mejor puntaje: <span id="mejor">0</span> de 120. Prototipo del Sprint 1, Equipo 6 SCRUM.
+  </p>
+  <script is:inline>
+    try {
+      var mejor = +localStorage.getItem('sprint-best') || 0;
+      document.getElementById('mejor').textContent = mejor;
+    } catch (e) {}
+  </script>
+</Base>
