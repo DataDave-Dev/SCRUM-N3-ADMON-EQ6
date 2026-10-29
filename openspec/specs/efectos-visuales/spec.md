@@ -1,10 +1,9 @@
-# Spec Delta
+# efectos-visuales Specification
 
 ## Purpose
-
 Animaciones breves que celebran los logros y señalan los errores sin interrumpir el juego.
 
-## ADDED Requirements
+## Requirements
 
 ### Requirement: Confeti
 El juego SHALL lanzar confeti sobre toda la pantalla al mostrar el resultado de un escenario con 30 puntos o más y al mostrar "Juego completado". El confeti SHALL desaparecer solo y no SHALL bloquear pulsaciones.
@@ -22,7 +21,7 @@ Al mostrar la retroalimentación de error el contenido SHALL sacudirse brevement
 
 #### Scenario: Error
 - **WHEN** la persona falla un reto
-- **THEN** la pantalla se sacude y queda estable antes de que la persona pueda pulsar "Continuar"
+- **THEN** la pantalla se sacude menos de medio segundo, vuelve a su posición y "Continuar" sigue pulsable durante la sacudida
 
 ### Requirement: Estrellas escalonadas
 En "Juego completado" las estrellas SHALL aparecer una tras otra con un retraso creciente, en lugar de todas a la vez.

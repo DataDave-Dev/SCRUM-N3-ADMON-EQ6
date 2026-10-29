@@ -8,10 +8,10 @@ El juego ya es completo pero seco: sin sonidos, sin confeti ni sacudida, la resp
 
 - Sonidos cortos generados en el navegador para acierto, error y victoria, con botón de silencio.
 - Confeti al cerrar un escenario con buen puntaje y al completar el juego.
-- Sacudida de pantalla al fallar y estrellas finales que aparecen escalonadas.
-- Respeto de `prefers-reduced-motion` y foco visible en todos los controles.
+- Sacudida de pantalla al fallar. Las estrellas escalonadas ya llegaron en r05; aquí solo se fijan en spec.
+- Respeto de `prefers-reduced-motion` y foco visible en todos los controles. Escritura, estrellas y foco amarillo ya lo cumplen; falta el confeti, que no es CSS.
 
-**Fuera de alcance:** música de fondo, archivos de audio, ajustes de volumen.
+**Fuera de alcance:** música de fondo, archivos de audio, ajustes de volumen, recordar el silencio entre visitas (el prototipo no lo hace).
 
 ## Capabilities
 
@@ -26,4 +26,4 @@ El juego ya es completo pero seco: sin sonidos, sin confeti ni sacudida, la resp
 ## Impact
 
 - Nuevo: `src/game/sonido.ts`, `src/game/confeti.ts`, botón de silencio en `src/pages/jugar.astro`.
-- Modificado: `src/game/flujo.ts` (disparo de sonidos y efectos en acierto, error, resultado y final), `global.css` (animaciones y media query de movimiento reducido).
+- Modificado: `src/game/flujo.ts` (disparo de sonidos y efectos en acierto, error, resultado y final), `global.css` (sacudida, canvas y botón de silencio).
