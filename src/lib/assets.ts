@@ -8,3 +8,6 @@ export const ruta = (p: string) => `${BASE}${p}`;
 /** URL pública de una imagen extraída del prototipo (public/img/<clave>.<ext>). */
 export const img = (clave: ClaveImagen) =>
   ruta(`/img/${clave}.${clave.startsWith('b') && clave.length === 2 ? 'jpg' : 'webp'}`);
+
+/** Versión pixelada (public/img/px/<clave>.png); se escala con image-rendering: pixelated. */
+export const px = (clave: ClaveImagen) => ruta(`/img/px/${clave}.png`);

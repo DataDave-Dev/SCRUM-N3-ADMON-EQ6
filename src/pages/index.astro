@@ -1,33 +1,474 @@
 ---
 import Base from '../layouts/Base.astro';
-import { img, ruta } from '../lib/assets';
+import Pixel from '../components/Pixel.astro';
+import { escenarios } from '../data/escenarios';
+import { personajes } from '../data/personajes';
+import { reglas } from '../data/reglas';
+import { px, ruta } from '../lib/assets';
+import type { ClavePersonaje } from '../data/tipos';
+
+const lista = Object.values(personajes);
+const retos = escenarios.reduce((n, e) => n + e.retos.length, 0);
+const datos = [`${retos} RETOS`, `${escenarios.length} ESCENARIOS`, '3 VIDAS', '10 PTS POR ACIERTO', `MÁX. ${retos * 10} PTS`];
+/** Nivel que guía cada personaje, o 0 si solo juega. */
+const guia = (c: ClavePersonaje) => escenarios.findIndex((e) => e.guia === c) + 1;
+/** Ancho real de cada sprite pixelado (56 px de alto), para width/height explícitos. */
+const ancho: Record<ClavePersonaje, number> = { beto: 25, riqui: 34, lili: 38, inge: 28, tono: 39, pau: 28 };
 ---
 
-<Base>
-  <img
-    class="gp"
-    src={img('group')}
-    alt="Beto, Riqui, Lili, El Inge Morales, Toño y Pau"
-    width="693"
-    height="520"
-    fetchpriority="high"
+<Base fondo={null}>
+  <link
+    slot="head"
+    href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap"
+    rel="stylesheet"
   />
-  <h1>Sprint en la escuela</h1>
-  <p>
-    Ayuda a Beto, Riqui, Lili, Pau y Toño a terminar su videojuego resolviendo 12 retos de SCRUM por
-    la escuela.
-  </p>
-  <div class="ctr">
-    <a class="go" href={ruta('/jugar/')}>Jugar</a>
-    <a class="ghost" href={ruta('/como-se-juega/')}>Cómo se juega</a>
+
+  <div class="pg">
+    <header class="hud pixel">
+      <div class="fila">
+        <span class="blink rojo">1UP</span>
+        <span>SCORE <span class="yel">000000</span></span>
+      </div>
+      <div class="fila">
+        <span class="yel">HI-SCORE</span>
+        <span id="mejor">000000</span>
+      </div>
+      <div class="fila">
+        <span class="vidas" role="img" aria-label="3 vidas">
+          <Pixel tipo="corazon" alto={18} /><Pixel tipo="corazon" alto={18} /><Pixel tipo="corazon" alto={18} />
+        </span>
+        <span>CREDITS <span class="yel">01</span></span>
+      </div>
+    </header>
+
+    <section class="hero" aria-labelledby="titulo">
+      <img class="px fondo" src={px('b0')} alt="" width="192" height="144" fetchpriority="high" />
+      <div class="velo" aria-hidden="true"></div>
+      <div class="txt">
+        <p class="pixel blink yel">INSERT COIN · EQUIPO 6 PRESENTA</p>
+        <h1 id="titulo">Sprint en la<br />escuela</h1>
+        <p class="lead">
+          Ayuda a Beto, Riqui, Lili, Pau y Toño a terminar su videojuego resolviendo {retos} retos de
+          SCRUM por la escuela.
+        </p>
+        <div class="ctas">
+          <a class="start pixel" href={ruta('/jugar/')}><Pixel tipo="flecha" alto={28} /> JUGAR</a>
+          <a class="alt pixel pxb" href="#como">CÓMO SE JUEGA</a>
+        </div>
+      </div>
+      <div class="suelo">
+        <div class="sprites">
+          {lista.map((p, i) => (
+            <img
+              class:list={['px', { bob: i % 4 === 1 }]}
+              src={px(p.clave)}
+              alt={p.nombre}
+              width={ancho[p.clave]}
+              height="56"
+            />
+          ))}
+        </div>
+        <div class="pasto" aria-hidden="true"></div>
+        <div class="tierra" aria-hidden="true"></div>
+      </div>
+    </section>
+
+    <div class="cinta pixel">
+      {datos.map((d, i) => (
+        <>
+          {i > 0 && <Pixel tipo="estrella" alto={14} />}
+          <span>{d}</span>
+        </>
+      ))}
+    </div>
+
+    <section class="sec" aria-labelledby="players">
+      <div class="fila">
+        <Pixel class="blink yel" tipo="flecha" alto={28} />
+        <h2 id="players" class="pixel">SELECT PLAYER</h2>
+        <Pixel class="blink yel volteado" tipo="flecha" alto={28} />
+      </div>
+      <div class="cards">
+        {lista.map((p, i) => (
+          <article class="card pxb">
+            <div class="vitrina">
+              <img class="px" src={px(p.clave)} alt="" width={ancho[p.clave]} height="56" />
+            </div>
+            <h3 class="pixel" style={`background:${p.color}`}>{p.nombre}</h3>
+            {guia(p.clave) ? (
+              <p class="yel">GUÍA · NIVEL {guia(p.clave)}</p>
+            ) : (
+              <p class="gris">P{i + 1} · JUGADOR</p>
+            )}
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="sec stages" aria-labelledby="stages">
+      <div class="intro">
+        <h2 id="stages" class="pixel yel">SELECT STAGE</h2>
+        <p class="gris">
+          Tres escenarios de la escuela. Cada uno con 4 retos: opción múltiple, ordenar y relacionar.
+        </p>
+      </div>
+      <div class="cards">
+        {escenarios.map((e, i) => (
+          <article class:list={['stage', 'pxb', { off: i > 0 }]}>
+            <div class="port">
+              <img class="px" src={px(e.fondo)} alt={e.titulo} width={i ? 128 : 192} height={i ? 96 : 144} />
+              <span class="tag pixel">STAGE {i + 1}</span>
+              {i === 0 ? (
+                <span class="tag open pixel blink">OPEN</span>
+              ) : (
+                <span class="lock"><Pixel tipo="candado" alto={48} label="Bloqueado" /></span>
+              )}
+            </div>
+            <div class="info">
+              <h3 class="pixel">{e.titulo}</h3>
+              <p class={i ? 'gris' : 'yel'}>{e.tema}</p>
+              <p class="gris chico">Guía: {personajes[e.guia].nombre} · {e.retos.length} retos</p>
+              {i === 0 ? (
+                <div class="seg" role="img" aria-label={`${e.retos.length} retos, ninguno resuelto`}>
+                  {e.retos.map(() => <i></i>)}
+                </div>
+              ) : (
+                <p class="pixel gris aviso">TERMINA EL STAGE {i} PARA ABRIR</p>
+              )}
+            </div>
+          </article>
+        ))}
+      </div>
+      <a class="start grande pixel" href={ruta('/jugar/')}><Pixel tipo="flecha" alto={28} /> PRESS START</a>
+    </section>
+
+    <section id="como" class="sec reglas" aria-labelledby="titulo-reglas">
+      <h2 id="titulo-reglas" class="pixel">CÓMO SE JUEGA</h2>
+      {reglas.map((r) => (
+        <div class="dialogo pxb" style={`--b:${personajes[r.personaje].color}`}>
+          <img class="px" src={px(r.personaje)} alt="" width={ancho[r.personaje]} height="56" />
+          <div class="habla">
+            <p class="pixel nombre">{personajes[r.personaje].nombre}</p>
+            <p class="texto">{r.texto}</p>
+          </div>
+          <Pixel class="blink sigue" tipo="abajo" alto={12} />
+        </div>
+      ))}
+    </section>
+
+    <footer class="pie pixel gris">
+      <span>PROTOTIPO · SPRINT 1 · EQUIPO 6 SCRUM</span>
+      <span>MEJOR PUNTAJE <span id="mejor-pie" class="yel">0</span> / {retos * 10}</span>
+      <span class="blink claro">© 2026 · INSERT COIN</span>
+    </footer>
+
+    <div class="scan" aria-hidden="true"></div>
   </div>
-  <p class="ctr">
-    Mejor puntaje: <span id="mejor">0</span> de 120. Prototipo del Sprint 1, Equipo 6 SCRUM.
-  </p>
+
   <script is:inline>
     try {
       var mejor = +localStorage.getItem('sprint-best') || 0;
-      document.getElementById('mejor').textContent = mejor;
+      document.getElementById('mejor').textContent = String(mejor).padStart(6, '0');
+      document.getElementById('mejor-pie').textContent = mejor;
     } catch (e) {}
   </script>
 </Base>
+
+<style>
+  :global(body) {
+    background: #0a0a0d;
+    color: #f2f0e6;
+    font: 400 26px/1.2 VT323, 'Courier New', monospace;
+  }
+  :global(main#app) { max-width: none; padding: 0; gap: 0; }
+
+  .pg {
+    --rojo: #ff3b47;
+    --sombra: #8a1018;
+    --gris: #9a9aa6;
+    --panel: #121218;
+    --borde: #f2f0e6;
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+    background-size: 16px 16px;
+  }
+  .pixel { font-family: 'Press Start 2P', monospace; }
+  .px { image-rendering: pixelated; }
+  .pxb {
+    --b: var(--borde);
+    box-shadow: 0 -4px 0 0 var(--b), 0 4px 0 0 var(--b), -4px 0 0 0 var(--b), 4px 0 0 0 var(--b);
+  }
+  .yel { color: var(--yel); }
+  .rojo { color: var(--rojo); }
+  .gris { color: var(--gris); }
+  .claro { color: var(--borde); }
+  .fila { display: flex; align-items: center; gap: 20px; }
+  .blink { animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  .bob { animation: bob 1.2s steps(2) infinite; }
+  @keyframes bob { 50% { transform: translateY(-6px); } }
+  .volteado { transform: scaleX(-1); }
+  h2 { font-size: 22px; line-height: 1.4; text-shadow: 3px 3px 0 var(--sombra); text-align: center; }
+  h3 { margin: 0; }
+
+  /* HUD */
+  .hud {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px 32px;
+    padding: 14px 24px;
+    background: #000;
+    border-bottom: 4px solid var(--borde);
+    font-size: 12px;
+    line-height: 1.6;
+  }
+  .hud .fila:nth-child(2) { gap: 12px; }
+  .vidas { display: inline-flex; gap: 6px; color: var(--rojo); }
+
+  /* Hero */
+  .hero {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    min-height: 760px;
+    padding: 72px 24px 0;
+    text-align: center;
+    overflow: hidden;
+    border-bottom: 4px solid var(--borde);
+  }
+  .fondo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.5; }
+  .velo {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(10, 10, 13, 0.85), rgba(10, 10, 13, 0.35) 45%, rgba(10, 10, 13, 0.9));
+  }
+  .txt {
+    position: relative;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 28px;
+    max-width: 960px;
+    padding-bottom: 56px;
+  }
+  .txt .pixel { font-size: 12px; line-height: 1.8; letter-spacing: 2px; }
+  .hero h1 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: clamp(30px, 5vw, 60px);
+    line-height: 1.3;
+    color: var(--rojo);
+    text-shadow: 4px 4px 0 var(--sombra), 8px 8px 0 #000;
+    text-transform: uppercase;
+  }
+  .lead { max-width: 680px; font-size: 30px; line-height: 1.15; text-shadow: 2px 2px 0 #000; }
+  .ctas { display: flex; flex-wrap: wrap; justify-content: center; gap: 24px 32px; margin-top: 12px; }
+  .start {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    min-height: 56px;
+    padding: 14px 32px;
+    background: var(--yel);
+    color: var(--ink);
+    font-size: 16px;
+    text-decoration: none;
+    box-shadow: 0 -4px 0 0 var(--ink), 0 4px 0 0 var(--ink), -4px 0 0 0 var(--ink), 4px 0 0 0 var(--ink), 0 10px 0 0 #000;
+  }
+  .start:hover, .start:active {
+    transform: translateY(4px);
+    box-shadow: 0 -4px 0 0 var(--ink), 0 4px 0 0 var(--ink), -4px 0 0 0 var(--ink), 4px 0 0 0 var(--ink), 0 6px 0 0 #000;
+  }
+  .start.grande { min-height: 60px; padding: 16px 40px; font-size: 18px; }
+  .alt {
+    display: inline-flex;
+    align-items: center;
+    min-height: 56px;
+    padding: 14px 28px;
+    background: rgba(10, 10, 13, 0.7);
+    color: var(--borde);
+    font-size: 14px;
+    text-decoration: none;
+    margin: 4px;
+  }
+  .alt:hover { background: var(--borde); color: #0a0a0d; }
+  .suelo { position: relative; width: 100%; display: flex; flex-direction: column; align-items: center; }
+  .sprites { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-end; gap: 0 28px; padding: 0 16px; }
+  .sprites img { height: 168px; width: auto; }
+  .sprites img:nth-child(4) { height: 180px; }
+  @media (max-width: 600px) {
+    .hero { min-height: 640px; }
+    .sprites { gap: 0 6px; padding: 0; }
+    .sprites img { height: 80px; }
+    .sprites img:nth-child(4) { height: 86px; }
+  }
+  .pasto { width: 100%; height: 12px; background: #3fa653; box-shadow: 0 8px 0 0 #2a7a3a; }
+  .tierra {
+    width: 100%;
+    height: 36px;
+    background-color: #5a3a1e;
+    background-image:
+      linear-gradient(rgba(0, 0, 0, 0.25) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 0, 0, 0.25) 1px, transparent 1px);
+    background-size: 12px 12px;
+  }
+
+  /* Cinta de datos */
+  .cinta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 14px 28px;
+    padding: 14px 24px;
+    background: var(--rojo);
+    color: #0a0a0d;
+    font-size: 12px;
+    line-height: 1.6;
+    border-bottom: 4px solid var(--borde);
+  }
+
+  /* Secciones */
+  .sec {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+    width: 100%;
+    max-width: 1168px;
+    margin: 0 auto;
+    padding: 72px 24px;
+  }
+  .cards { display: flex; flex-wrap: wrap; justify-content: center; gap: 28px 24px; width: 100%; }
+  .card {
+    flex: 1 1 150px;
+    max-width: 176px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 12px 14px;
+    margin: 4px;
+    background: var(--panel);
+    text-align: center;
+    transition: transform 0.15s;
+  }
+  .card:hover { transform: translateY(-4px); }
+  .vitrina {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    height: 116px;
+    width: 100%;
+    background-color: #1b1b24;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: 8px 8px;
+  }
+  .vitrina img { height: 112px; width: auto; }
+  .card h3 {
+    width: 100%;
+    padding: 8px 4px;
+    color: #0a0a0d;
+    font-size: 11px;
+    line-height: 1.4;
+    text-transform: uppercase;
+  }
+  .card p { font-size: 20px; }
+
+  /* Escenarios */
+  .stages {
+    max-width: none;
+    padding: 56px 24px 80px;
+    background: #000;
+    border-top: 4px solid var(--borde);
+    border-bottom: 4px solid var(--borde);
+  }
+  .intro { display: flex; flex-direction: column; align-items: center; gap: 16px; max-width: 1120px; text-align: center; }
+  .intro p { font-size: 24px; }
+  .stages .cards { max-width: 1120px; gap: 36px 32px; }
+  .stage {
+    --b: var(--yel);
+    flex: 1 1 300px;
+    max-width: 352px;
+    display: flex;
+    flex-direction: column;
+    margin: 4px;
+    background: var(--panel);
+    transition: transform 0.15s;
+  }
+  .stage:not(.off):hover { transform: translateY(-4px); }
+  .stage.off { --b: #55555f; }
+  .port { position: relative; height: 180px; overflow: hidden; border-bottom: 4px solid var(--b); }
+  .port img { width: 100%; height: 100%; object-fit: cover; }
+  .off .port img { filter: grayscale(1) brightness(0.45); }
+  .tag {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    padding: 8px 10px;
+    background: var(--b);
+    color: #0a0a0d;
+    font-size: 10px;
+  }
+  .tag.open { left: auto; right: 12px; background: #0a0a0d; color: var(--yel); }
+  .lock { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--borde); }
+  .info { display: flex; flex-direction: column; gap: 12px; padding: 20px 20px 22px; }
+  .info h3 { font-size: 13px; line-height: 1.6; text-transform: uppercase; }
+  .info p { font-size: 24px; }
+  .info .chico { font-size: 20px; }
+  .info .aviso { font-size: 10px; line-height: 1.6; }
+  .seg { display: flex; gap: 6px; }
+  .seg i { flex: 1; height: 10px; background: #2a2a33; box-shadow: inset 0 0 0 2px #0a0a0d; }
+
+  /* Diálogos RPG */
+  .reglas { max-width: 1008px; gap: 36px; padding-bottom: 80px; }
+  .dialogo {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 20px 28px;
+    width: 100%;
+    padding: 24px 28px 28px;
+    margin: 4px;
+    background: color-mix(in srgb, var(--b) 12%, #0a0a0d);
+  }
+  .dialogo img { height: 112px; width: auto; }
+  .habla { flex: 1 1 400px; display: flex; flex-direction: column; gap: 10px; }
+  .nombre { align-self: flex-start; padding: 6px 10px; background: var(--b); color: #0a0a0d; font-size: 10px; text-transform: uppercase; }
+  .texto { font-size: 28px; line-height: 1.15; }
+  .sigue { position: absolute; right: 16px; bottom: 12px; color: var(--borde); }
+
+  /* Pie y CRT */
+  .pie {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px 32px;
+    padding: 24px;
+    background: #000;
+    border-top: 4px solid var(--borde);
+    font-size: 10px;
+    line-height: 1.8;
+  }
+  .scan {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(180deg, rgba(0, 0, 0, 0.22) 0 2px, transparent 2px 4px);
+  }
+</style>

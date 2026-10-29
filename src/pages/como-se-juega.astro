@@ -1,21 +1,12 @@
 ---
 import Base from '../layouts/Base.astro';
 import Globo from '../components/Globo.astro';
+import { reglas } from '../data/reglas';
 import { ruta } from '../lib/assets';
 ---
 
 <Base titulo="Cómo se juega">
   <h2>Cómo se juega</h2>
-  <Globo personaje="inge">
-    Recorre tres escenarios de la escuela. Cada uno tiene 4 retos: de opción múltiple, de ordenar y
-    de relacionar.
-  </Globo>
-  <Globo personaje="lili">
-    Empiezas con 3 vidas. Cada acierto suma 10 puntos y cada error quita una vida. Tienes tiempo
-    limitado por reto.
-  </Globo>
-  <Globo personaje="tono">
-    Si encadenas aciertos haces racha. Termina los tres escenarios con al menos una vida para ganar.
-  </Globo>
+  {reglas.map((r) => <Globo personaje={r.personaje}>{r.texto}</Globo>)}
   <a class="go" href={ruta('/')}>Entendido</a>
 </Base>

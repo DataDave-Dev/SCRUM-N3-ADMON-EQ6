@@ -5,7 +5,8 @@ import { img, ruta } from '../lib/assets';
 
 interface Props {
   titulo?: string;
-  fondo?: ClaveFondo;
+  /** Fondo difuminado; null para páginas con su propio fondo. */
+  fondo?: ClaveFondo | null;
 }
 const { titulo, fondo = 'b0' } = Astro.props;
 const JUEGO = 'Sprint en la escuela';
@@ -26,10 +27,11 @@ const JUEGO = 'Sprint en la escuela';
       href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@600;800&display=swap"
       rel="stylesheet"
     />
+    <slot name="head" />
     <title>{titulo ? `${titulo} - ${JUEGO}` : JUEGO}</title>
   </head>
   <body>
-    <div id="bg" style={`background-image:url(${img(fondo)})`}></div>
+    {fondo && <div id="bg" style={`background-image:url(${img(fondo)})`} />}
     <main id="app">
       <slot />
     </main>
