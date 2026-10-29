@@ -1,0 +1,63 @@
+schema: spec-driven
+
+context: |
+  Language: es
+  All artifacts must be written in es.
+  Keep OpenSpec structural headings and SHALL/MUST keywords in English.
+
+  ## Proyecto
+  "Sprint en la escuela": juego web educativo para aprender SCRUM (fundamentos,
+  roles, eventos y artefactos). Materia SCRUM N3 - Administración, Equipo 6.
+  Repo: github.com/DataDave-Dev/SCRUM-N3-ADMON-EQ6.
+  Fuente de verdad funcional: prototype/sprint1-prototipo.html (HTML único,
+  22 imágenes base64, JS vanilla). Objetivo: portarlo a Astro por rebanadas
+  verticales, cada una jugable y desplegable.
+
+  ## Dominio (tomado del prototipo)
+  - 6 personajes: Beto, Riqui, Lili, El Inge Morales (Scrum Master), Toño, Pau.
+    Cada uno con sprite base, feliz (sufijo 1) y triste (sufijo 2). Imagen grupal.
+  - 3 escenarios en orden: Exterior de la escuela (Fundamentos de SCRUM),
+    Salón de clases (Roles del equipo), Cancha de la escuela (Eventos y
+    artefactos). Cada escenario: fondo, personaje guía, 3 líneas de intro, 4 retos.
+  - 12 retos: 9 de opción múltiple (3 opciones barajadas), 1 de ordenar
+    (4 pasos), 2 de relacionar (3 pares). Cada reto tiene explicación.
+  - Reglas: 3 vidas; acierto = 10 pts (máximo 120); error o tiempo agotado =
+    pierde 1 vida y racha vuelve a 0; tiempo 25 s en opción múltiple y 45 s en
+    ordenar/relacionar; el escenario N se desbloquea al completar el N-1.
+  - Resultado por escenario: X de 40 pts.
+  - Final: estrellas (>=90 pts: 3, >=60: 2, si no: 1); rango (>=100 Maestro
+    Scrum, >=80 Desarrollador pro, >=60 Desarrollador en práctica, si no:
+    Aprendiz como Beto); insignias: "Sin errores", "Racha de N" si racha
+    máxima >=6, "Velocista" si >=6 aciertos en menos de 10 s.
+  - Mejor puntaje persistido en localStorage, clave "sprint-best".
+  - Game over al llegar a 0 vidas: muestra las últimas 3 explicaciones falladas
+    y permite reintentar.
+
+  ## Stack y convenciones
+  - Astro 7 (template minimal), TypeScript strict, pnpm, Node >= 22.
+  - Sin frameworks UI. Astro para shell, layout y pantallas estáticas; módulos
+    TS vanilla en src/game/ para estado y pantallas dinámicas.
+  - Sin dependencias nuevas salvo justificación en design.md. Vitest se admite
+    para lógica pura (puntaje, estado, validación de respuestas).
+  - Estilos: tokens CSS en src/styles/global.css con la paleta del prototipo
+    (--deep #12261f, --chalk #f5f2e6, --yel #ffd84d, --pink #ff7aa8,
+    --blue #4aa3ff, --red #ec4b3f, --grn #5cc46a). Fuentes Baloo 2 y Nunito.
+  - Imágenes en public/img/ extraídas del prototipo. Datos del juego tipados
+    en src/data/.
+  - Mobile-first, contenedor de 720px máximo, respeta prefers-reduced-motion.
+  - Commits en Conventional Commits, sin firmas de IA. Rama main.
+    Despliegue en GitHub Pages.
+
+  ## Estrategia de rebanadas verticales
+  Cada change de OpenSpec es una rebanada vertical: toca datos, lógica y UI y
+  deja el juego jugable y desplegable hasta donde llega. Orden previsto:
+  01-esqueleto-inicio, 02-escenario-opcion-multiple, 03-vidas-tiempo-racha,
+  04-retos-ordenar-relacionar, 05-final-y-record, 06-sonido-y-efectos.
+
+rules:
+  proposal:
+    - Máximo una página. Indicar siempre qué queda fuera de alcance.
+  specs:
+    - Una conducta por requirement; los casos límite van en scenarios.
+  tasks:
+    - Tareas de máximo 2 horas, cada una con verificación explícita.
