@@ -51,8 +51,8 @@ context: |
   ## Estrategia de rebanadas verticales
   Cada change de OpenSpec es una rebanada vertical: toca datos, lógica y UI y
   deja el juego jugable y desplegable hasta donde llega. Orden previsto:
-  01-esqueleto-inicio, 02-escenario-opcion-multiple, 03-vidas-tiempo-racha,
-  04-retos-ordenar-relacionar, 05-final-y-record, 06-sonido-y-efectos.
+  r01-esqueleto-inicio, r02-escenario-opcion-multiple, r03-vidas-tiempo-racha,
+  r04-retos-ordenar-relacionar, r05-final-y-record, r06-sonido-y-efectos.
 
 rules:
   proposal:
