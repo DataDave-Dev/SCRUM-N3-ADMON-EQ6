@@ -18,4 +18,4 @@
 
 ## 4. Integración
 
-- [ ] 4.1 Jugar una partida perdiendo y otra ganando el escenario 1 y verificar que `pnpm test`, `pnpm astro check` y `pnpm build` pasan y que el sitio publicado refleja los cambios
+- [x] 4.1 Jugar una partida perdiendo y otra ganando el escenario 1 y verificar que `pnpm test`, `pnpm astro check` y `pnpm build` pasan y que el sitio publicado refleja los cambios
