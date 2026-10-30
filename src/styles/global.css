@@ -1,3 +1,20 @@
+/* Tailwind sin preflight: no altera los estilos base existentes */
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+
+/* Paleta del juego como utilidades: bg-deep, text-chalk, border-yel... */
+@theme inline {
+  --color-deep: var(--deep);
+  --color-chalk: var(--chalk);
+  --color-yel: var(--yel);
+  --color-pink: var(--pink);
+  --color-blue: var(--blue);
+  --color-red: var(--red);
+  --color-grn: var(--grn);
+  --color-ink: var(--ink);
+}
+
 /* Tokens y estilos base tomados de prototype/sprint1-prototipo.html */
 :root {
   --deep: #12261f;
