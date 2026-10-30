@@ -1,11 +1,11 @@
 ---
-import Base from '../layouts/Base.astro';
-import Pixel from '../components/Pixel.astro';
-import { escenarios } from '../data/escenarios';
-import { personajes } from '../data/personajes';
-import { reglas } from '../data/reglas';
-import { px, ruta } from '../lib/assets';
-import type { ClavePersonaje } from '../data/tipos';
+import Base from '@/layouts/Base.astro';
+import Pixel from '@/components/Pixel.astro';
+import { escenarios } from '@/data/escenarios';
+import { personajes } from '@/data/personajes';
+import { reglas } from '@/data/reglas';
+import { px, ruta } from '@/lib/assets';
+import type { ClavePersonaje } from '@/data/tipos';
 
 const lista = Object.values(personajes);
 const retos = escenarios.reduce((n, e) => n + e.retos.length, 0);
@@ -166,7 +166,7 @@ const ancho: Record<ClavePersonaje, number> = { beto: 25, riqui: 34, lili: 38, i
   </div>
 
   <script>
-    import { leerRecord } from '../lib/record';
+    import { leerRecord } from '@/lib/record';
     const mejor = leerRecord();
     document.getElementById('mejor')!.textContent = String(mejor).padStart(6, '0');
     document.getElementById('mejor-pie')!.textContent = String(mejor);

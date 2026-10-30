@@ -1,4 +1,4 @@
-import type { ClaveImagen } from '../data/tipos';
+import type { ClaveImagen } from '@/data/tipos';
 
 const BASE = import.meta.env.BASE_URL.replace(/\/$/, '');
 

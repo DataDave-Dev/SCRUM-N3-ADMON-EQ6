@@ -1,6 +1,6 @@
-import { escenarios } from '../data/escenarios';
-import { guardarRecord } from '../lib/record';
-import { lanzar } from './confeti';
+import { escenarios } from '@/data/escenarios';
+import { guardarRecord } from '@/lib/record';
+import { lanzar } from '@/game/confeti';
 import {
   activarConcepto,
   asignarDefinicion,
@@ -14,18 +14,18 @@ import {
   MS_ACIERTO_RAPIDO,
   type Pantalla,
   type Partida,
-} from './estado';
-import { derrota } from './pantallas/derrota';
-import { final } from './pantallas/final';
-import { intro } from './pantallas/intro';
-import { mapa } from './pantallas/mapa';
-import { resultado } from './pantallas/resultado';
-import { cuerpoReto, reto, SEGUNDOS_POR_TIPO } from './pantallas/reto';
-import { retro } from './pantallas/retro';
-import { escuchar, montar } from './render';
-import * as sonido from './sonido';
-import * as temporizador from './temporizador';
-import { barajar, elementos, retosJugables } from './util';
+} from '@/game/estado';
+import { derrota } from '@/game/pantallas/derrota';
+import { final } from '@/game/pantallas/final';
+import { intro } from '@/game/pantallas/intro';
+import { mapa } from '@/game/pantallas/mapa';
+import { resultado } from '@/game/pantallas/resultado';
+import { cuerpoReto, reto, SEGUNDOS_POR_TIPO } from '@/game/pantallas/reto';
+import { retro } from '@/game/pantallas/retro';
+import { escuchar, montar } from '@/game/render';
+import * as sonido from '@/game/sonido';
+import * as temporizador from '@/game/temporizador';
+import { barajar, elementos, retosJugables } from '@/game/util';
 
 /** Abre el reto `i` del escenario actual con sus elementos barajados y sin selección. */
 const entrarReto = (p: Partida, i: number, rnd: () => number, ahora: () => number): Partida => {
@@ -112,8 +112,7 @@ const PANTALLAS = { mapa, intro, reto, retro, resultado, derrota, fin: final } a
 let partida = nuevaPartida();
 
 function pintar(): void {
-  const fondo = partida.pantalla === 'mapa' ? 'b0' : escenarios[partida.escenario]!.fondo;
-  montar(PANTALLAS[partida.pantalla](partida), fondo);
+  montar(PANTALLAS[partida.pantalla](partida));
   if (partida.pantalla === 'reto') iniciarTiempo();
 }
 

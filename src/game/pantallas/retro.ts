@@ -1,9 +1,9 @@
-import { escenarios } from '../../data/escenarios';
-import { personajes } from '../../data/personajes';
-import { img } from '../../lib/assets';
-import { guiaDelReto, type Partida } from '../estado';
-import { esc, globo, retosJugables } from '../util';
-import { marcador } from './marcador';
+import { escenarios } from '@/data/escenarios';
+import { personajes } from '@/data/personajes';
+import { img, px } from '@/lib/assets';
+import { guiaDelReto, PUNTOS_POR_ACIERTO, type Partida } from '@/game/estado';
+import { esc, globo, retosJugables } from '@/game/util';
+import { marcador } from '@/game/pantallas/marcador';
 
 export const retro = (p: Partida): string => {
   const e = escenarios[p.escenario]!;
@@ -14,10 +14,13 @@ export const retro = (p: Partida): string => {
   const mensaje = acierto
     ? `¡Correcto! ${p.racha >= 3 ? `Llevas una racha de ${p.racha}. ` : ''}`
     : `${p.tiempoAgotado ? 'Se acabó el tiempo.' : 'Casi.'} ${r.tipo === 'mc' ? `La respuesta era “${esc(r.correcta)}”. ` : ''}`;
+  // El banner repite el inicio del globo: es decorativo.
+  const banner = acierto ? `¡Correcto! <span class="blink">+${PUNTOS_POR_ACIERTO}</span>` : p.tiempoAgotado ? '¡Tiempo!' : '¡Casi!';
   return (
     marcador(p) +
-    `<div class="scn" style="background-image:url(${img(e.fondo)})"><img class="mini" src="${img(sprite)}" alt=""></div>` +
+    `<p class="pixel banner ${acierto ? 'ok' : 'mal'}" aria-hidden="true">${banner}</p>` +
+    `<div class="scn pxb ${acierto ? 'ok' : 'mal'}"><img class="px fondo" src="${px(e.fondo)}" alt=""><img class="mini" src="${img(sprite)}" alt=""></div>` +
     globo(guia, mensaje + esc(r.explicacion)) +
-    `<button class="go" data-accion="continuar">Continuar</button>`
+    `<button class="start" data-accion="continuar">Continuar</button>`
   );
 };

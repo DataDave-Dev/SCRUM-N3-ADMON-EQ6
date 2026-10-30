@@ -1,5 +1,5 @@
 import { afterEach, expect, test, vi } from 'vitest';
-import { guardarRecord, leerRecord } from './record';
+import { guardarRecord, leerRecord } from '@/lib/record';
 
 const memoria = () => {
   const m = new Map<string, string>();

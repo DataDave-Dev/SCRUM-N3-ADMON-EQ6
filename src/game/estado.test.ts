@@ -14,7 +14,7 @@ import {
   rango,
   resolverReto,
   type Partida,
-} from './estado';
+} from '@/game/estado';
 
 test('un acierto suma 10 puntos a la partida y al escenario; un error no suma', () => {
   const p = resolverReto(nuevaPartida(), true);

@@ -1,7 +1,7 @@
 import { expect, test } from 'vitest';
-import { escenarios } from '../data/escenarios';
-import { RETOS_POR_PARTIDA } from './estado';
-import { barajar, esc, retosJugables } from './util';
+import { escenarios } from '@/data/escenarios';
+import { RETOS_POR_PARTIDA } from '@/game/estado';
+import { barajar, esc, retosJugables } from '@/game/util';
 
 test('barajar conserva los elementos y no muta el original', () => {
   const orig = [1, 2, 3, 4, 5];

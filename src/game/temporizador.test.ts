@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
-import { detener, iniciar } from './temporizador';
+import { detener, iniciar } from '@/game/temporizador';
 
 beforeEach(() => vi.useFakeTimers());
 afterEach(() => {

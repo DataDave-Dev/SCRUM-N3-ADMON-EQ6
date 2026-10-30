@@ -1,7 +1,7 @@
-import { escenarios } from '../../data/escenarios';
-import type { Partida } from '../estado';
-import { esc, globo } from '../util';
-import { marcador } from './marcador';
+import { escenarios } from '@/data/escenarios';
+import type { Partida } from '@/game/estado';
+import { esc, globo, retosJugables } from '@/game/util';
+import { marcador } from '@/game/pantallas/marcador';
 
 const PUNTOS_MAXIMOS_ESCENARIO = 40;
 
@@ -13,11 +13,18 @@ export const resultado = (p: Partida): string => {
     pts === PUNTOS_MAXIMOS_ESCENARIO
       ? '¡Perfecto! Así se avanza en Scrum: una meta pequeña a la vez.'
       : 'Bien hecho. Cada Sprint deja algo que mejorar.';
+  // Los retos del escenario recién terminado son los últimos del progreso.
+  const casillas = p.progreso
+    .slice(-retosJugables(e).length)
+    .map((r, i) => `<i class="${r === 1 ? 'on' : 'bad'}">${i + 1}</i>`)
+    .join('');
   return (
     marcador(p) +
-    `<h2>${esc(e.titulo)}: completado</h2>` +
-    `<p class="d ctr puntaje">${pts} / ${PUNTOS_MAXIMOS_ESCENARIO}</p>` +
+    `<p class="pixel titulo" aria-hidden="true">Stage<br>clear!</p>` +
+    `<h2 class="pixel kicker">${esc(e.titulo)}: completado</h2>` +
+    `<div class="caja pxb"><p class="pixel puntaje">${pts}<small> / ${PUNTOS_MAXIMOS_ESCENARIO}</small></p>` +
+    `<div class="casillas pixel" aria-hidden="true">${casillas}</div></div>` +
     globo('inge', mensaje) +
-    `<button class="go" data-accion="${todos ? 'fin' : 'mapa'}">${todos ? 'Ver resultados' : 'Volver al mapa'}</button>`
+    `<button class="start" data-accion="${todos ? 'fin' : 'mapa'}">${todos ? 'Ver resultados' : 'Volver al mapa'}</button>`
   );
 };

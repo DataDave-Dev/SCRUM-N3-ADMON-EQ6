@@ -1,8 +1,8 @@
 import { expect, test } from 'vitest';
-import { nuevaPartida, type Partida } from './estado';
-import { escenarios } from '../data/escenarios';
-import { transicion } from './flujo';
-import { retosJugables } from './util';
+import { nuevaPartida, type Partida } from '@/game/estado';
+import { escenarios } from '@/data/escenarios';
+import { transicion } from '@/game/flujo';
+import { retosJugables } from '@/game/util';
 
 const avanzar = (p: Partida, pasos: [string, string?][]) =>
   pasos.reduce((q, [accion, arg]) => transicion(q, accion, arg), p);

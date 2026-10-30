@@ -1,4 +1,4 @@
-import type { ClavePersonaje, Personaje } from './tipos';
+import type { ClavePersonaje, Personaje } from '@/data/tipos';
 
 const def = (clave: ClavePersonaje, nombre: string, color: string): Personaje => ({
   clave,

@@ -1,8 +1,9 @@
-import { escenarios } from '../../data/escenarios';
-import { personajes } from '../../data/personajes';
-import { img, ruta } from '../../lib/assets';
-import type { Partida } from '../estado';
-import { esc, globo } from '../util';
+import { escenarios } from '@/data/escenarios';
+import { personajes } from '@/data/personajes';
+import { img, px, ruta } from '@/lib/assets';
+import { pixel } from '@/lib/pixel';
+import { VIDAS_INICIALES, type Partida } from '@/game/estado';
+import { esc, globo } from '@/game/util';
 
 const FALLOS_A_REPASAR = 3;
 
@@ -10,12 +11,18 @@ const FALLOS_A_REPASAR = 3;
 export const derrota = (p: Partida): string => {
   const repaso = p.fallos
     .slice(-FALLOS_A_REPASAR)
-    .map((x) => `<br>• ${esc(x)}`)
+    .map((x) => `<li>${esc(x)}</li>`)
     .join('');
+  const corazones = pixel('corazon', 24).repeat(VIDAS_INICIALES);
   return (
-    `<h1>Se acabaron las vidas</h1>` +
-    `<div class="scn" style="background-image:url(${img(escenarios[p.escenario]!.fondo)})"><img class="mini" src="${img(personajes.inge.sprites.triste)}" alt=""></div>` +
-    globo('tono', `Los errores son normales: se prueba, se anota y se corrige en el siguiente Sprint. Repasa esto:${repaso}`) +
-    `<button class="go" data-accion="reintentar">Reintentar</button> <a class="ghost" href="${ruta('/')}">Inicio</a>`
+    `<div class="vidas vacias" aria-hidden="true">${corazones}</div>` +
+    `<p class="pixel titulo" aria-hidden="true">Game<br>over</p>` +
+    `<h1 class="sub-titulo">Se acabaron las vidas</h1>` +
+    `<div class="scn pxb gris"><img class="px fondo" src="${px(escenarios[p.escenario]!.fondo)}" alt=""><img class="mini" src="${img(personajes.inge.sprites.triste)}" alt=""></div>` +
+    globo(
+      'tono',
+      `Los errores son normales: se prueba, se anota y se corrige en el siguiente Sprint. Repasa esto:<ul class="repaso">${repaso}</ul>`,
+    ) +
+    `<div class="acciones"><button class="start" data-accion="reintentar">Reintentar</button><a class="alt pxb" href="${ruta('/')}">Inicio</a></div>`
   );
 };

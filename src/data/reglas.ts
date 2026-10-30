@@ -1,4 +1,4 @@
-import type { Linea } from './tipos';
+import type { Linea } from '@/data/tipos';
 
 /** Reglas del juego, dichas por los guías; las usan la landing y /como-se-juega. */
 export const reglas: Linea[] = [

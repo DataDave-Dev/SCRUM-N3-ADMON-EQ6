@@ -1,16 +1,23 @@
 ---
-import Base from '../layouts/Base.astro';
+import Base from '@/layouts/Base.astro';
+import '@/styles/juego.css';
 ---
 
-<Base titulo="Jugar">
+<Base titulo="Jugar" fondo={null}>
+  <link
+    slot="head"
+    href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap"
+    rel="stylesheet"
+  />
   <noscript><p>El juego necesita JavaScript.</p></noscript>
   <canvas id="confeti" slot="fuera" aria-hidden="true"></canvas>
-  <button id="silencio" slot="fuera" type="button">Sonido: sí</button>
+  <div class="scan" slot="fuera" aria-hidden="true"></div>
+  <button id="silencio" class="pixel" slot="fuera" type="button">Sonido: sí</button>
 </Base>
 
 <script>
-  import { iniciar } from '../game/flujo';
-  import { estaSilenciado, silenciar } from '../game/sonido';
+  import { iniciar } from '@/game/flujo';
+  import { estaSilenciado, silenciar } from '@/game/sonido';
 
   const boton = document.getElementById('silencio')!;
   boton.addEventListener('click', () => {

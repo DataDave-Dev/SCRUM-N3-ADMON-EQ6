@@ -1,4 +1,4 @@
-import type { Escenario } from './tipos';
+import type { Escenario } from '@/data/tipos';
 
 export const escenarios: Escenario[] = [
   {
