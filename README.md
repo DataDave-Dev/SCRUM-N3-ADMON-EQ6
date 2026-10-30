@@ -23,6 +23,19 @@ pnpm astro check                  # tipos de .astro y .ts
 node scripts/extraer-assets.mjs   # vuelve a extraer las imágenes del prototipo a public/img/
 ```
 
+## Tests
+
+Pruebas unitarias con [Vitest](https://vitest.dev/). Cada prueba vive junto a su módulo como
+`*.test.ts` (por ejemplo `src/game/flujo.ts` → `src/game/flujo.test.ts`). `vitest.config.ts`
+reutiliza la config de Vite de Astro, así que el alias `@/` funciona igual que en el código.
+
+```sh
+pnpm test                               # corre todas las pruebas una vez
+pnpm test src/game/flujo.test.ts        # solo un archivo
+pnpm test -t "nombre de la prueba"      # solo las pruebas cuyo nombre coincide
+pnpm exec vitest                        # modo watch: vuelve a correr al guardar
+```
+
 ## Estructura
 
 ```
